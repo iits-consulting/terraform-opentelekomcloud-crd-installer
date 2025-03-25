@@ -10,7 +10,7 @@ Usage example (overriding versions and disabling built-in default charts):
 ```hcl
 module "crds" {
   source  = "iits-consulting/crd-installer/opentelekomcloud/"
-  version = "7.4.1"
+
   default_chart_overrides = {
     cert-manager = {
       version = "1.16.1"
@@ -31,7 +31,7 @@ Usage example (adding new charts for crd installation):
 ```hcl
 module "crds" {
   source  = "iits-consulting/crd-installer/opentelekomcloud/"
-  version = "7.4.1"
+
   charts = {
     exampleChart1 = {
       repository = "https://charts.iits.tech"
