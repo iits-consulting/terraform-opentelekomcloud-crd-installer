@@ -1,3 +1,5 @@
+data "kubectl_server_version" "current" {}
+
 data "helm_template" "charts" {
   for_each                   = { for chart, params in local.charts_merged : chart => params if params.enabled }
   name                       = each.key
@@ -9,21 +11,35 @@ data "helm_template" "charts" {
   include_crds               = true
   disable_openapi_validation = true
   render_subchart_notes      = false
-  kube_version               = var.kube_version
+  kube_version               = data.kubectl_server_version.current.version
   values                     = each.value.values
-
   dynamic "set" {
-    for_each = toset(each.value.set)
+    for_each = { for param in each.value.set : param.name => {
+      value = param.value
+      type  = param.type
+    } }
     content {
-      name  = set.value.name
+      name  = set.key
       value = set.value.value
+      type  = set.value.type
+    }
+  }
+  dynamic "set_list" {
+    for_each = { for param in each.value.set_list : param.name => param.value }
+    content {
+      name  = set_list.key
+      value = set_list.value
     }
   }
   dynamic "set_sensitive" {
-    for_each = toset(each.value.set_sensitive)
+    for_each = { for param in each.value.set_sensitive : param.name => {
+      value = param.value
+      type  = param.type
+    } }
     content {
-      name  = set_sensitive.value.name
+      name  = set_sensitive.key
       value = set_sensitive.value.value
+      type  = set_sensitive.value.type
     }
   }
 }

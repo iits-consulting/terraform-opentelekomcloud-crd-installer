@@ -2,12 +2,36 @@
 
 A module designed to automatically extract the crds from Helm charts and install them on the target kubernetes cluster. The module can be used with existing CRDs without importing.
 
-Usage example:
+> **WARNING:** This module will have a large footprint on the terraform state depending on the size and number of charts.  
+> Module execution and subsequent state generation can take a longer than usual time due to the large size of the state the module generates.  
+> It is recommended to use it as standalone in its own script to separate its state from other terraform scripts.
 
+Usage example (overriding versions and disabling built-in default charts):
 ```hcl
 module "crds" {
   source  = "iits-consulting/crd-installer/opentelekomcloud/"
-  version = "6.0.2"
+  version = "7.4.1"
+  default_chart_overrides = {
+    cert-manager = {
+      version = "1.16.1"
+    }
+    traefik = {
+      version = "32.1.1"
+    }
+    kyverno = {
+      enabled = false
+    }
+    prometheus-stack = {
+      version = "62.6.0"
+    }
+  }
+}
+```
+Usage example (adding new charts for crd installation):
+```hcl
+module "crds" {
+  source  = "iits-consulting/crd-installer/opentelekomcloud/"
+  version = "7.4.1"
   charts = {
     exampleChart1 = {
       repository = "https://charts.iits.tech"
@@ -28,10 +52,6 @@ module "crds" {
   }
 }
 ```
-
-> **WARNING:** This module will have a large footprint on the terraform state depending on the size and number of charts.  
-> Module execution and subsequent state generation can take a longer than usual time due to the large size of the state the module generates.  
-> It is recommended to use it as standalone in its own script to separate its state from other terraform scripts.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

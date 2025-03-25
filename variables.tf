@@ -33,13 +33,6 @@ variable "force_new" {
   description = "Forces delete & create of resources if the CRD manifest changes."
 }
 
-variable "kube_version" {
-  type        = string
-  default     = "1.29.2" // Latest CCE
-  description = "Select the kubernetes cluster version for charts that require version validation."
-}
-
-
 variable "charts" {
   type = map(object({
     repository = string
@@ -48,11 +41,17 @@ variable "charts" {
     values     = optional(list(string), [""])
     set = optional(list(object({
       name  = string
-      value = string
+      value = optional(string)
+      type  = optional(string)
+    })), [])
+    set_list = optional(list(object({
+      name  = string
+      value = list(string)
     })), [])
     set_sensitive = optional(list(object({
       name  = string
       value = string
+      type  = optional(string)
     })), [])
   }))
   default     = {}
@@ -75,7 +74,9 @@ locals {
       set = [{
         name  = "cert-manager.installCRDs"
         value = true
+        type  = "auto"
       }]
+      set_list      = []
       set_sensitive = []
     }
     traefik = {
@@ -86,7 +87,9 @@ locals {
       set = [{
         name  = "traefik.metrics.prometheus.disableAPICheck"
         value = true
+        type  = "auto"
       }]
+      set_list      = []
       set_sensitive = []
     }
     kyverno = {
@@ -97,7 +100,9 @@ locals {
       set = [{
         name  = "kyverno.crds.install"
         value = true
+        type  = "auto"
       }]
+      set_list      = []
       set_sensitive = []
     }
     prometheus-stack = {
@@ -108,7 +113,9 @@ locals {
       set = [{
         name  = "prometheusStack.crds.enabled"
         value = true
+        type  = "auto"
       }]
+      set_list      = []
       set_sensitive = []
     }
   }
