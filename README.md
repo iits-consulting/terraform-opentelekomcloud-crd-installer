@@ -1,3 +1,7 @@
+# :warning: IMPORTANT NOTICE
+
+Effective July 11th, 2025, **this repository will be moved to [terraform-kubernetes-crd-installer](https://github.com/iits-consulting/terraform-kubernetes-crd-installer)** and no longer maintained. In order to continue receiving the latest updates and support, **please transition to using our new repository**.
+
 ## Custom Resource Definition Installer
 
 A module designed to automatically extract the crds from Helm charts and install them on the target kubernetes cluster. The module can be used with existing CRDs without importing.
